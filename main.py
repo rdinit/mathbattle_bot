@@ -20,6 +20,18 @@ class Brain():
                 number_height:int, restart_button:Tuple[int, int],
                 left_button:Tuple[int, int], right_button:Tuple[int, int],
                 healthbar:Tuple[int, int, int]) -> None:
+        """Brain Class init
+
+        Parameters:
+        path (str): classification model path ("model/v3" is best)
+        task_box: grab screen (x,y,x,y)
+        number_height: letter height (needed for correct resize)
+        restart_button: positin of restart button, this pixel should be green
+        left_button: left button coordinates
+        right_button: right button coordinates
+        healthbar: progressbar (x, y, length)
+
+        """
         self.model = torch.load(path)
         self.model = self.model.cpu()
         self.task_box = task_box
@@ -86,6 +98,15 @@ class Brain():
         cv2.imwrite(f'logs/{imgname}.png', img)
 
     def think(self, src='screen', chck=False, loop_id=0):
+        """Think funuction
+        solve quuix and click answer.
+
+        Parameters:
+        src (str): screen to get image from screen or path to image
+        chck (bool): check restart button, and click it
+        loop_id (bool): required to save image in log folder
+
+        """
         if src != 'screen':
             img = cv2.imread(src)
         else:
@@ -117,11 +138,6 @@ class Brain():
             else:
                 images = torch.vstack((images, self.prepare_image(self.edit_image(thresh[y:yy, x:xx]))))
                 t2 = cv2.rectangle(t2, (x, y), (xx, yy), (255, 255, 255), thickness=3)
-        cv2.imshow('thresh', t2)
-
-        k = cv2.waitKey(1)
-        if k == 27 or False:
-            cv2.destroyAllWindows()
 
         preds = self.predict(images)
         
@@ -140,6 +156,7 @@ class Brain():
         #sleep(0.1)
         h = self.get_health()
         if 0.3 < self.health - h:
+            # if answer is incorrect
             print(v)
             self.save_log(thresh, loop_id, v)
         self.health = h
@@ -172,20 +189,25 @@ class Brain():
             if k == 27 or False:
                 break
         cv2.destroyAllWindows()
-        
 
-brain = Brain('model/v3', (740, 180, 14420, 460), 90, (1070, 730), (930, 740), (1220, 740), (750, 510, 650))
-brain.task_box
-sleep(2)
-cnt = 0
-#brain.capture_screen()
-while True:
-    #sbreak
-    try:
-        brain.think(chck=cnt % 20 == 0, loop_id=cnt)
-        
-    except AttributeError as e:
-        print(e.with_traceback)
-    cnt += 1
-    
-    #sleep(10*(cnt < 2))
+if __name__ == "__main__":
+    brain = Brain('model/v3',
+                    (740, 180, 1420, 460),  # grab screen (x,y,x,y)
+                    90,  # letter height (needed for correct resize)
+                    (1070, 730),  # positin of restart button, this pixel should be green
+                    (930, 740),  # left button coordinates
+                    (1220, 740),  # right button coordinates
+                    (750, 510, 650)  # progressbar (x, y, length)
+                )
+    sleep(10)
+    cnt = 0
+    while True:
+        try:
+            brain.think(chck=cnt % 20 == 0, loop_id=cnt)
+        except SyntaxError as e:
+            print(e.with_traceback)
+        cnt += 1
+
+
+__all__ = [Brain]
+__version__ = '0.1'
