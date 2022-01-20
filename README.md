@@ -12,7 +12,7 @@
 * Running:
     Example code
     ```
-    Brain('model/v3',
+    brain = Brain('model/v3',
                     (740, 180, 1420, 460),  # grab screen (x,y,x,y)
                     90,  # letter height (needed for correct resize)
                     (1070, 730),  # positin of restart button, this pixel should be green
