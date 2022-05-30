@@ -1,9 +1,3 @@
-from asyncore import loop
-from re import S
-from tabnanny import check
-from tkinter.ttk import Progressbar
-from xml.dom.minidom import Attr
-from xml.etree.ElementTree import ElementTree
 import torch
 import cv2
 from PIL import ImageGrab, Image
