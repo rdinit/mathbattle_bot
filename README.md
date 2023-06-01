@@ -22,4 +22,4 @@
                 )
     brain.think(chck=True, loop_id=1)
     ```
-    Config parameters personally for your screen
+    Config parameters personally for your screen (this parameters are fine for 1440x900 resolution)
